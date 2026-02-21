@@ -4,6 +4,7 @@ import { OrbitControls, Center, Html } from '@react-three/drei'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 import * as THREE from 'three'
 import { motion, useInView } from 'framer-motion'
+import { useLazyCanvas } from '../hooks/useLazyCanvas'
 
 function GyroidMesh() {
   const geometry = useLoader(STLLoader, '/models/gyroid_gradient.stl')
@@ -64,6 +65,7 @@ function LoadingIndicator() {
 export default function GyroidViewer() {
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const { ref: canvasRef, visible: canvasReady } = useLazyCanvas('300px')
 
   return (
     <section id="gyroid" className="py-32 relative">
@@ -104,12 +106,15 @@ export default function GyroidViewer() {
         <div className="grid lg:grid-cols-[1fr_380px] gap-6">
           {/* Gyroid 3D viewer */}
           <motion.div
+            ref={canvasRef}
             initial={{ opacity: 0, x: -30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.2 }}
             className="relative rounded-2xl overflow-hidden border border-[#ffffff08] bg-[#12121a] glow-border"
             style={{ height: '500px' }}
           >
+            {canvasReady ? (
+            <>
             <Canvas
               camera={{ fov: 50, near: 0.01, far: 100, position: [5, 4, 5] }}
               gl={{ antialias: true }}
@@ -143,6 +148,15 @@ export default function GyroidViewer() {
               }} />
               <span className="text-xs text-[#00d4ff]">Root (k=3)</span>
             </div>
+            </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 border-2 border-[#64c864]/30 border-t-[#64c864] rounded-full animate-spin" />
+                  <span className="text-sm text-[#8888aa]">Loading gyroid…</span>
+                </div>
+              </div>
+            )}
           </motion.div>
 
           {/* Info panel */}

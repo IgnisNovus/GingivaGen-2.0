@@ -4,6 +4,7 @@ import { OrbitControls, Center, Html } from '@react-three/drei'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 import * as THREE from 'three'
 import { motion, useInView } from 'framer-motion'
+import { useLazyCanvas } from '../hooks/useLazyCanvas'
 
 const MATERIALS = [
   {
@@ -109,6 +110,7 @@ export default function ScaffoldViewer() {
 
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const { ref: canvasRef, visible: canvasReady } = useLazyCanvas('300px')
 
   const toggleMat = (id: string) => {
     setVisibility((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -140,12 +142,15 @@ export default function ScaffoldViewer() {
         <div className="grid lg:grid-cols-[1fr_320px] gap-6 mt-10">
           {/* 3D Viewer */}
           <motion.div
+            ref={canvasRef}
             initial={{ opacity: 0, x: -30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.2 }}
             className="relative rounded-2xl overflow-hidden border border-[#ffffff08] bg-[#12121a] glow-border"
             style={{ height: '600px' }}
           >
+            {canvasReady ? (
+            <>
             <Canvas
               camera={{
                 fov: 45,
@@ -175,6 +180,15 @@ export default function ScaffoldViewer() {
               </svg>
               Drag to rotate · Scroll to zoom
             </div>
+            </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 border-2 border-[#00d4ff]/30 border-t-[#00d4ff] rounded-full animate-spin" />
+                  <span className="text-sm text-[#8888aa]">Loading scaffold meshes…</span>
+                </div>
+              </div>
+            )}
           </motion.div>
 
           {/* Material controls sidebar */}

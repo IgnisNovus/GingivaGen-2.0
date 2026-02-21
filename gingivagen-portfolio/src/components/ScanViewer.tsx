@@ -4,6 +4,7 @@ import { OrbitControls, Center, Html } from '@react-three/drei'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
 import * as THREE from 'three'
 import { motion, useInView } from 'framer-motion'
+import { useLazyCanvas } from '../hooks/useLazyCanvas'
 
 function extractAndPrepare(obj: THREE.Group): THREE.BufferGeometry | null {
   let geo: THREE.BufferGeometry | null = null
@@ -216,6 +217,7 @@ export default function ScanViewer() {
   const [showScaffold, setShowScaffold] = useState(false)
   const sectionRef = useRef(null)
   const inView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const { ref: canvasRef, visible: canvasReady } = useLazyCanvas('300px')
 
   return (
     <section id="scanner" className="py-32 relative">
@@ -279,9 +281,11 @@ export default function ScanViewer() {
           </div>
 
           <div
+            ref={canvasRef}
             className="relative rounded-2xl overflow-hidden border border-[#ffffff08] bg-[#12121a] glow-border"
             style={{ height: '600px' }}
           >
+            {canvasReady ? (
             <Canvas
               camera={{ fov: 45, near: 0.1, far: 2000 }}
               gl={{ antialias: true, alpha: true }}
@@ -311,6 +315,14 @@ export default function ScanViewer() {
                 enablePan
               />
             </Canvas>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 border-2 border-[#00d4ff]/30 border-t-[#00d4ff] rounded-full animate-spin" />
+                  <span className="text-sm text-[#8888aa]">Loading 3D scan…</span>
+                </div>
+              </div>
+            )}
 
             <div className="absolute bottom-4 left-4 flex items-center gap-2 text-xs text-[#8888aa]/50">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
