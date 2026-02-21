@@ -90,7 +90,7 @@ export default function GyroidViewer() {
             Sharpey's fiber alignment; further away it relaxes to isotropic
             pores for uniform cell migration. Computed via the{' '}
             <a
-              href="https://github.com/TPMS-Lisbon-Lab/LisbonTPMStool"
+              href="https://github.com/SoftwareImpacts/SIMPAC-2025-26"
               target="_blank"
               rel="noopener"
               className="text-[#00d4ff] hover:underline"

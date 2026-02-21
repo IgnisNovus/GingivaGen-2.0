@@ -69,13 +69,13 @@ const openSourceTools = [
   },
   {
     name: '3DTeethSAM',
-    url: 'https://github.com/',
+    url: 'https://github.com/Crisitofy/3DTeethSAM',
     description: 'SAM-based 3D tooth segmentation model',
     category: 'AI',
   },
   {
     name: 'LisbonTPMS',
-    url: 'https://github.com/TPMS-Lisbon-Lab/LisbonTPMStool',
+    url: 'https://github.com/SoftwareImpacts/SIMPAC-2025-26',
     description: 'TPMS lattice generation for tissue engineering',
     category: 'Geometry',
   },
