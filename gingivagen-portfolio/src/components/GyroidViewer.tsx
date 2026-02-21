@@ -16,7 +16,7 @@ function GyroidMesh() {
     // Color gradient: green (isotropic, left) → cyan (stretched, right)
     const pos = g.attributes.position
     const colors = new Float32Array(pos.count * 3)
-    const bbox = new THREE.Box3().setFromBufferAttribute(pos)
+    const bbox = new THREE.Box3().setFromBufferAttribute(pos as THREE.BufferAttribute)
     const xMin = bbox.min.x
     const xRange = bbox.max.x - bbox.min.x
 
