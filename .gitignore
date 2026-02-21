@@ -1,0 +1,46 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# GingivaGen 2.0 — .gitignore
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Patient data — DO NOT upload (Teeth3DS+ dataset, subject to license)
+Teeth3DS+/
+
+# Pipeline intermediate outputs
+_kaggle_staging/
+_datasets/
+output/
+
+# Kaggle credentials
+kaggle.json
+kaggle2.json
+
+# LisbonTPMS (clone separately)
+LisbonTPMStool/
+LisbonTPMS_repo/
+
+# Pytest
+.pytest_cache/
+
+# Node / Portfolio
+gingivagen-portfolio/node_modules/
+gingivagen-portfolio/dist/
+
+# Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

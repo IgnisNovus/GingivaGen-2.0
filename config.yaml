@@ -1,0 +1,85 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# GingivaGen 2.0 — Default Configuration
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Pipeline resolution
+voxel_size_mm: 0.05          # 50 µm isotropic voxel pitch
+
+# Output
+output_dir: "output"
+export_format: "stl"         # "stl" or "obj"
+export_combined_obj: true    # also export single multi-group OBJ
+
+# ── Phase 1: Segmentation ─────────────────────────────────────────────────
+segmentation:
+  model: "geometric"         # "3dteethsam" or "geometric" (fallback)
+  checkpoint: "ckpts/best.pth"
+  device: "cuda:0"
+  num_views: 7               # 3DTeethSAM camera views (7 fast, 60 HQ)
+
+# ── Phase 2: Ideal Volume ─────────────────────────────────────────────────
+ideal_volume:
+  rbf_kernel: "thin_plate_spline"
+  rbf_smoothing: 0.1
+  padding_mm: 1.0            # bounding box padding
+
+# ── Phase 3: Armor Shell ──────────────────────────────────────────────────
+armor:
+  thickness_mm: 0.5          # MUST be ≥ 0.4 mm for suture retention
+  material: "PCL"
+  bag_wt_percent: 10         # Bioactive Glass 45S5 doping
+  use_meshlib: true          # use meshlib offsetMesh if available
+  erosion_connectivity: 1    # 1=6-conn, 2=18-conn, 3=26-conn
+
+# ── Phase 4: Anisotropic Core ─────────────────────────────────────────────
+core:
+  target_pore_um: 325        # fibroblast migration optimum
+  pore_tolerance_um: 25
+  bioglue_thickness_mm: 0.1  # root-interface adhesion layer
+  use_lisbon_tpms: true      # use LisbonTPMS library if available
+  cell_size_mm: 2.0          # TPMS unit cell size (2 mm → 325 µm pores)
+  isovalue_bracket: [0.01, 1.5]
+
+  # PDL anisotropy
+  pdl_anisotropy_k: 3.0      # z-stretch factor at root surface
+  pdl_decay_length_mm: 2.0   # exponential decay length
+
+  # Mechanotransduction guardrail
+  e_solid_gelma_kpa: 50.0    # GelMA bulk modulus
+  stiffness_limit_kpa: 15.0  # YAP/TAZ activation threshold
+
+# ── Phase 5: Vascular Channels ────────────────────────────────────────────
+vascular:
+  channel_diameter_mm: 0.4   # 400 µm Pluronic sacrificial channels
+  channel_spacing_mm: 2.0    # centre-to-centre
+  material: "Pluronic F-127"
+
+# ── Phase 6: G-code Export ────────────────────────────────────────────────
+gcode:
+  heads:
+    - tool_id: 0
+      name: "PCL+BAG"
+      pressure_kpa: 300
+      speed_mm_s: 3
+      nozzle_mm: 0.41
+    - tool_id: 1
+      name: "GelMA"
+      pressure_kpa: 45
+      speed_mm_s: 5
+      nozzle_mm: 0.25
+    - tool_id: 2
+      name: "Pluronic"
+      pressure_kpa: 60
+      speed_mm_s: 8
+      nozzle_mm: 0.41
+  travel_speed_mm_min: 3000
+
+# ── Dataset ───────────────────────────────────────────────────────────────
+dataset:
+  root: "D:/Teeth3DS+"
+  extract_dir: "D:/Teeth3DS+/extracted"
+
+# ── Visualization ─────────────────────────────────────────────────────────
+visualization:
+  auto_screenshots: false    # render phase screenshots automatically
+  screenshot_dir: "output/screenshots"
